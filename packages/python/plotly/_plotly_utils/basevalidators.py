@@ -103,6 +103,13 @@ def copy_to_readonly_numpy_array(v, kind=None, force_numeric=False):
             else:
                 # DatetimeIndex
                 v = v.to_pydatetime()
+        elif v.dtype.kind == "m":
+            # Convert timedelta Series/Index to numpy array of timedeltas
+            if isinstance(v, pd.Series):
+                v = v.dt.to_pytimedelta()
+            else:
+                # DatetimeIndex
+                v = v.to_pytimedelta()
     if not isinstance(v, np.ndarray):
         # v has its own logic on how to convert itself into a numpy array
         if is_numpy_convertable(v):
