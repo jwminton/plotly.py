@@ -102,7 +102,7 @@ class PlotlyJSONEncoder(_json.JSONEncoder):
             self.encode_as_numpy,
             self.encode_as_pandas,
             self.encode_as_datetime,
-            self.encode_as_date,
+            self.encode_as_timedelta,
             self.encode_as_list,  # because some values have `tolist` do last.
             self.encode_as_decimal,
             self.encode_as_pil,
@@ -177,14 +177,11 @@ class PlotlyJSONEncoder(_json.JSONEncoder):
             raise NotEncodable
 
     @staticmethod
-    def encode_as_date(obj):
-        """Attempt to convert to utc-iso time string using date methods."""
-        try:
-            time_string = obj.isoformat()
-        except AttributeError:
-            raise NotEncodable
-        else:
-            return iso_to_plotly_time_string(time_string)
+    def encode_as_timedelta(obj):
+        """Convert timedelta objects to strings"""
+        if isinstance(obj, datetime.timedelta):
+            return str(obj)
+        raise NotEncodable
 
     @staticmethod
     def encode_as_decimal(obj):
